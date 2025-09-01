@@ -1,0 +1,10 @@
+{
+  "name": "borisp-Editor",
+  "references": [
+    "borisp"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}
