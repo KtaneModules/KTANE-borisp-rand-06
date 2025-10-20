@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Collections;
 using UnityEngine;
-using KModkit;
 using Rnd = UnityEngine.Random;
 
-public class template : MonoBehaviour
+public class borisScript : MonoBehaviour
 {
-    public KMBombInfo Bomb;
     public KMAudio Audio;
-
-    public Font[] fonts;
-    public Material fontMat;
-    public Texture[] fontMaterials;
+    public AudioClip solved;
+    public AudioClip correct;
+    //public Font[] fonts;
+    //public Material fontMat;
+    //public Texture[] fontMaterials;
+    public TextMesh[] allFonts;
+    public GameObject[] allFontsObjects;
     public TextMesh topScreen;
-    public TextMesh bottomScreen;
     public Texture[] faces;
     public MeshRenderer screen;
 
@@ -31,11 +27,11 @@ public class template : MonoBehaviour
 
     private string alphabet = "abcdefghijklmnopqrstuvwxyz";
     private string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private int stage = 0;
+    private int stage;
     private string solution;
-    private bool _moduleSelected = false;
+    private bool _moduleSelected;
 
-    private string[] words = new string[]{"ABACUS", "ABDUCT", "ABJECT", "ABLAZE", "ABOARD", "ABOUND", "ABROAD", "ABRUPT", "ABSENT", "ABSORB", "ABSURD", "ABUSED", "ABUSER", "ABUSES", "ACACIA", "ACCEDE", "ACCENT", "ACCEPT", "ACCESS", "ACCORD", "ACCOST", "ACCRUE", "ACCUSE", "ACETIC", "ACHING", "ACIDIC", "ACQUIT", "ACROSS", "ACTING", "ACTION", "ACTIVE", "ACTORS", "ACTUAL", "ACUITY", "ACUMEN", "ADAGIO", "ADDICT", "ADDING", "ADHERE", "ADJOIN", "ADJUST", "ADMIRE", "ADMITS", "ADORED", "ADRIFT", "ADULTS", "ADVENT", "ADVERB", "ADVERT", "ADVICE", "ADVISE", "AERIAL", "AFFAIR", "AFFECT", "AFFINE", "AFFIRM", "AFFORD", "AFGHAN", "AFIELD", "AFLAME", "AFLOAT", "AFRAID", "AFRESH", "AFRICA", "AGENCY", "AGENDA", "AGENTS", "AGHAST", "AGREED", "AGREES", "AIMING", "AIRBAG", "AIRING", "ALASKA", "ALBEIT", "ALBINO", "ALBUMS", "ALCOVE", "ALIENS", "ALKALI", "ALLEGE", "ALLELE", "ALLIED", "ALLIES", "ALLOWS", "ALLUDE", "ALLURE", "ALMOND", "ALMOST", "ALPACA", "ALPINE", "ALUMNA", "ALUMNI", "ALWAYS", "AMAZED", "AMAZON", "AMBUSH", "AMENDS", "AMIDST", "AMOEBA", "AMORAL", "AMOUNT", "AMULET", "AMUSED", "ANALOG", "ANCHOR", "ANEMIA", "ANEMIC", "ANGELS", "ANGINA", "ANGLED", "ANGLER", "ANGLES", "ANGORA", "ANIMAL", "ANKLES", "ANKLET", "ANNUAL", "ANOINT", "ANORAK", "ANSWER", "ANTHEM", "ANTICS", "ANTLER", "ANYHOW", "ANYONE", "ANYWAY", "AORTIC", "APACHE", "APATHY", "APIECE", "APOGEE", "APPALL", "APPEAL", "APPEAR", "APPEND", "APPLES", "APPLET", "ARCADE", "ARCANA", "ARCANE", "ARCHED", "ARCHER", "ARCHES", "ARCHLY", "ARCTIC", "ARDENT", "ARGUED", "ARGUES", "ARISEN", "ARISES", "ARMADA", "ARMFUL", "ARMIES", "ARMING", "ARMORY", "ARMOUR", "ARMPIT", "AROUND", "AROUSE", "ARREST", "ARRIVE", "ARROWS", "ARTERY", "ARTFUL", "ARTIST", "ASCEND", "ASCENT", "ASHORE", "ASKING", "ASLEEP", "ASPECT", "ASPIRE", "ASSENT", "ASSERT", "ASSESS", "ASSETS", "ASSIGN", "ASSIST", "ASSUME", "ASSURE", "ASTHMA", "ASTRAL", "ASTRAY", "ASTUTE", "ASYLUM", "ATOMIC", "ATONAL", "ATRIUM", "ATTACH", "ATTACK", "ATTAIN", "ATTEND", "ATTEST", "ATTIRE", "ATTUNE", "AUGUST", "AUNTIE", "AUTHOR", "AUTISM", "AUTUMN", "AVATAR", "AVENGE", "AVENUE", "AVERSE", "AVIARY", "AVIDLY", "AVOIDS", "AVOWAL", "AVOWED", "AWAKEN", "AWARDS", "AWHILE", "AWNING", "AZALEA",
+    private string[] words = {"ABACUS", "ABDUCT", "ABJECT", "ABLAZE", "ABOARD", "ABOUND", "ABROAD", "ABRUPT", "ABSENT", "ABSORB", "ABSURD", "ABUSED", "ABUSER", "ABUSES", "ACACIA", "ACCEDE", "ACCENT", "ACCEPT", "ACCESS", "ACCORD", "ACCOST", "ACCRUE", "ACCUSE", "ACETIC", "ACHING", "ACIDIC", "ACQUIT", "ACROSS", "ACTING", "ACTION", "ACTIVE", "ACTORS", "ACTUAL", "ACUITY", "ACUMEN", "ADAGIO", "ADDICT", "ADDING", "ADHERE", "ADJOIN", "ADJUST", "ADMIRE", "ADMITS", "ADORED", "ADRIFT", "ADULTS", "ADVENT", "ADVERB", "ADVERT", "ADVICE", "ADVISE", "AERIAL", "AFFAIR", "AFFECT", "AFFINE", "AFFIRM", "AFFORD", "AFGHAN", "AFIELD", "AFLAME", "AFLOAT", "AFRAID", "AFRESH", "AFRICA", "AGENCY", "AGENDA", "AGENTS", "AGHAST", "AGREED", "AGREES", "AIMING", "AIRBAG", "AIRING", "ALASKA", "ALBEIT", "ALBINO", "ALBUMS", "ALCOVE", "ALIENS", "ALKALI", "ALLEGE", "ALLELE", "ALLIED", "ALLIES", "ALLOWS", "ALLUDE", "ALLURE", "ALMOND", "ALMOST", "ALPACA", "ALPINE", "ALUMNA", "ALUMNI", "ALWAYS", "AMAZED", "AMAZON", "AMBUSH", "AMENDS", "AMIDST", "AMOEBA", "AMORAL", "AMOUNT", "AMULET", "AMUSED", "ANALOG", "ANCHOR", "ANEMIA", "ANEMIC", "ANGELS", "ANGINA", "ANGLED", "ANGLER", "ANGLES", "ANGORA", "ANIMAL", "ANKLES", "ANKLET", "ANNUAL", "ANOINT", "ANORAK", "ANSWER", "ANTHEM", "ANTICS", "ANTLER", "ANYHOW", "ANYONE", "ANYWAY", "AORTIC", "APACHE", "APATHY", "APIECE", "APOGEE", "APPALL", "APPEAL", "APPEAR", "APPEND", "APPLES", "APPLET", "ARCADE", "ARCANA", "ARCANE", "ARCHED", "ARCHER", "ARCHES", "ARCHLY", "ARCTIC", "ARDENT", "ARGUED", "ARGUES", "ARISEN", "ARISES", "ARMADA", "ARMFUL", "ARMIES", "ARMING", "ARMORY", "ARMOUR", "ARMPIT", "AROUND", "AROUSE", "ARREST", "ARRIVE", "ARROWS", "ARTERY", "ARTFUL", "ARTIST", "ASCEND", "ASCENT", "ASHORE", "ASKING", "ASLEEP", "ASPECT", "ASPIRE", "ASSENT", "ASSERT", "ASSESS", "ASSETS", "ASSIGN", "ASSIST", "ASSUME", "ASSURE", "ASTHMA", "ASTRAL", "ASTRAY", "ASTUTE", "ASYLUM", "ATOMIC", "ATONAL", "ATRIUM", "ATTACH", "ATTACK", "ATTAIN", "ATTEND", "ATTEST", "ATTIRE", "ATTUNE", "AUGUST", "AUNTIE", "AUTHOR", "AUTISM", "AUTUMN", "AVATAR", "AVENGE", "AVENUE", "AVERSE", "AVIARY", "AVIDLY", "AVOIDS", "AVOWAL", "AVOWED", "AWAKEN", "AWARDS", "AWHILE", "AWNING", "AZALEA",
             "BABBLE", "BABIES", "BABOON", "BACKED", "BACKER", "BACKUP", "BADDIE", "BADGER", "BAFFLE", "BAGGED", "BAGGER", "BAGGIE", "BAITED", "BAKERY", "BAKING", "BALDLY", "BALLAD", "BALLET", "BALLOT", "BALSAM", "BAMBOO", "BANANA", "BANDED", "BANDIT", "BANGED", "BANGER", "BANISH", "BANKED", "BANKER", "BANNED", "BANNER", "BANTER", "BANZAI", "BAOBAB", "BARBED", "BARBER", "BARELY", "BARIUM", "BARKER", "BARLEY", "BARMAN", "BARNET", "BARONS", "BARRED", "BARREL", "BARREN", "BARTER", "BASALT", "BASICS", "BASINS", "BASKET", "BASQUE", "BASSET", "BATHER", "BATTEN", "BATTER", "BATTLE", "BAUBLE", "BAZAAR", "BEACON", "BEADED", "BEAGLE", "BEAKER", "BEAMED", "BEARER", "BEASTS", "BEATEN", "BEATER", "BEAUTY", "BEAVER", "BECAME", "BECKON", "BECOME", "BEDBUG", "BEDLAM", "BEDPAN", "BEEPER", "BEETLE", "BEFALL", "BEFORE", "BEGGAR", "BEGGED", "BEGINS", "BEHALF", "BEHAVE", "BEHEAD", "BEHEST", "BEHIND", "BEHOLD", "BEINGS", "BELIEF", "BELLOW", "BELONG", "BELTED", "BEMOAN", "BENIGN", "BERATE", "BEREFT", "BERLIN", "BESIDE", "BESTOW", "BETRAY", "BETTER", "BETTOR", "BEWARE", "BEYOND", "BIASED", "BICEPS", "BICKER", "BIDDER", "BIGGER", "BIGWIG", "BIKING", "BIKINI", "BILLOW", "BINARY", "BINDER", "BIOGAS", "BIONIC", "BIOPIC", "BIOPSY", "BIOTIC", "BIRDER", "BIRDIE", "BIRTHS", "BISECT", "BISHOP", "BISQUE", "BISTRO", "BITING", "BITTEN", "BITTER", "BLACKS", "BLADES", "BLAMED", "BLANCH", "BLASTS", "BLAZER", "BLEACH", "BLEARY", "BLIGHT", "BLITHE", "BLOCKS", "BLOCKY", "BLONDE", "BLOODY", "BLOTCH", "BLOUSE", "BLOWER", "BLUISH", "BLURRY", "BOARDS", "BOASTS", "BOBBLE", "BOBCAT", "BODEGA", "BODICE", "BODIES", "BODILY", "BOGGLE", "BOILED", "BOILER", "BOLDLY", "BOLERO", "BOLTED", "BOMBED", "BOMBER", "BONBON", "BONDED", "BONNET", "BONOBO", "BONSAI", "BOOGIE", "BOOKED", "BOOKIE", "BOOMER", "BOOTED", "BORDER", "BOREAL", "BORING", "BORROW", "BOSSES", "BOSTON", "BOTANY", "BOTHER", "BOTTLE", "BOTTOM", "BOUGHT", "BOUNCE", "BOUNCY", "BOUNDS", "BOUNTY", "BOVINE", "BOWING", "BOWLER", "BOWTIE", "BOXCAR", "BOXING", "BOYISH", "BRAINS", "BRAINY", "BRAISE", "BRAKES", "BRANCH", "BRANDS", "BRANDY", "BRASSY", "BRAWNY", "BRAZEN", "BRAZIL", "BREACH", "BREAKS", "BREAST", "BREATH", "BREECH", "BREEDS", "BREEZE", "BREEZY", "BRICKS", "BRIDAL", "BRIDGE", "BRIDLE", "BRIGHT", "BRINGS", "BROACH", "BROGUE", "BROKEN", "BROKER", "BRONZE", "BROOCH", "BROOKS", "BROWSE", "BRUISE", "BRUNCH", "BRUSHY", "BRUTAL", "BUBBLE", "BUBBLY", "BUCKET", "BUCKLE", "BUDGET", "BUFFED", "BUFFER", "BUFFET", "BUGGER", "BUILDS", "BULLET", "BUMBLE", "BUMMED", "BUMMER", "BUMPER", "BUNDLE", "BUNGEE", "BUNGLE", "BUNKER", "BURDEN", "BUREAU", "BURGER", "BURIAL", "BURIED", "BURLAP", "BURNED", "BURNER", "BURROW", "BURSTS", "BUSBOY", "BUSHEL", "BUSHES", "BUSILY", "BUSING", "BUSMAN", "BUSTED", "BUSTLE", "BUTANE", "BUTLER", "BUTTER", "BUTTON", "BUYERS", "BUYING", "BUYOUT", "BUZZER", "BYGONE", "BYPASS",
             "CABLES", "CACKLE", "CACTUS", "CAESAR", "CAIMAN", "CALICO", "CALLED", "CALLER", "CALLUS", "CALMLY", "CALVES", "CAMERA", "CAMPER", "CAMPUS", "CANADA", "CANALS", "CANARY", "CANCEL", "CANCER", "CANDID", "CANDLE", "CANDOR", "CANINE", "CANNED", "CANNON", "CANOLA", "CANOPY", "CANTER", "CANVAS", "CANYON", "CAPPED", "CAPTOR", "CARBON", "CAREEN", "CAREER", "CARERS", "CARESS", "CARING", "CARNAL", "CARPAL", "CARPET", "CARROT", "CARTEL", "CARTON", "CARVED", "CASEIN", "CASHEW", "CASING", "CASINO", "CASKET", "CASTER", "CASTLE", "CASUAL", "CATCHY", "CATION", "CATNAP", "CATNIP", "CATTLE", "CAUGHT", "CAUSAL", "CAUSED", "CAUSES", "CAVEAT", "CAVERN", "CAVIAR", "CAVING", "CAVITY", "CEASED", "CELERY", "CELLAR", "CELTIC", "CEMENT", "CENSOR", "CENSUS", "CENTER", "CENTRE", "CEREAL", "CERVIX", "CESIUM", "CHAINS", "CHAIRS", "CHAISE", "CHAKRA", "CHALET", "CHALKY", "CHANCE", "CHANGE", "CHAPEL", "CHARGE", "CHARTS", "CHASER", "CHASTE", "CHATTY", "CHECKS", "CHEEKS", "CHEEKY", "CHEERS", "CHEERY", "CHEESE", "CHEESY", "CHEQUE", "CHERRY", "CHERUB", "CHEWED", "CHICKS", "CHIEFS", "CHILLY", "CHISEL", "CHIVES", "CHOICE", "CHOKED", "CHOKER", "CHOOSE", "CHOPPY", "CHORAL", "CHORDS", "CHORUS", "CHOSEN", "CHROME", "CHUBBY", "CHUNKS", "CHUNKY", "CHURCH", "CICADA", "CINDER", "CINEMA", "CIPHER", "CIRCLE", "CIRCUS", "CITIES", "CITING", "CITRUS", "CIVICS", "CLAIMS", "CLAMMY", "CLAMOR", "CLASSY", "CLAUSE", "CLAWED", "CLEAVE", "CLENCH", "CLERGY", "CLERIC", "CLERKS", "CLEVER", "CLICHE", "CLIENT", "CLIFFS", "CLIMAX", "CLINCH", "CLINGY", "CLINIC", "CLIQUE", "CLOCKS", "CLONED", "CLONES", "CLOSED", "CLOSER", "CLOSES", "CLOSET", "CLOTHE", "CLOUDS", "CLOUDY", "CLOVER", "CLUMPY", "CLUMSY", "CLUNKY", "CLUTCH", "COARSE", "COASTS", "COATED", "COBALT", "COBBLE", "COBWEB", "COCOON", "CODDLE", "CODIFY", "CODING", "COERCE", "COFFEE", "COFFER", "COFFIN", "COGNAC", "COHERE", "COHORT", "COILED", "COLDER", "COLDLY", "COLLAR", "COLONY", "COLORS", "COLUMN", "COMBAT", "COMEDY", "COMING", "COMMIT", "COMMON", "COMPEL", "COMPLY", "CONCUR", "CONDOR", "CONFER", "CONSUL", "CONVEX", "CONVEY", "CONVOY", "COOKED", "COOKER", "COOKIE", "COOLED", "COOLER", "COPIED", "COPIER", "COPIES", "COPING", "COPPER", "CORDED", "CORDON", "CORNEA", "CORNED", "CORNER", "CORNET", "CORONA", "CORPSE", "CORPUS", "CORRAL", "CORSET", "CORTEX", "COSMIC", "COSMOS", "COSTLY", "COTTON", "COUNTS", "COUNTY", "COUPLE", "COUPON", "COURSE", "COURTS", "COUSIN", "COVENT", "COVERS", "COVERT", "COWARD", "COWBOY", "COYOTE", "CRABBY", "CRACKS", "CRADLE", "CRAFTY", "CRANKY", "CRANNY", "CRATER", "CRAYON", "CRAZED", "CREAKY", "CREAMY", "CREASE", "CREATE", "CREDIT", "CREEPY", "CREOLE", "CRETIN", "CREWED", "CRIMES", "CRINGE", "CRISES", "CRISIS", "CRISPS", "CRISPY", "CRITIC", "CROCUS", "CROTCH", "CROUCH", "CROWDS", "CRUISE", "CRUMMY", "CRUNCH", "CRUSTY", "CRUTCH", "CRYING", "CUBISM", "CUBIST", "CUCKOO", "CUDDLE", "CUDDLY", "CUPPED", "CURATE", "CURDLE", "CURFEW", "CURLED", "CURLER", "CURSED", "CURSOR", "CURTLY", "CURTSY", "CURVED", "CURVES", "CUSTOM", "CUTESY", "CUTLET", "CUTTER", "CYBORG", "CYCLES", "CYCLIC", "CYMBAL", "CYSTIC",
             "DABBLE", "DAGGER", "DAIKON", "DAINTY", "DAMAGE", "DAMPEN", "DAMPER", "DAMSEL", "DANCED", "DANCER", "DANCES", "DANDER", "DANGER", "DANGLE", "DANISH", "DAPPER", "DAPPLE", "DARING", "DARKEN", "DARKER", "DARKLY", "DARNED", "DASHED", "DASHER", "DATING", "DAWDLE", "DAZZLE", "DEADEN", "DEADLY", "DEAFEN", "DEALER", "DEARLY", "DEATHS", "DEBASE", "DEBATE", "DEBRIS", "DEBTOR", "DEBUNK", "DECADE", "DECAMP", "DECANT", "DECEIT", "DECENT", "DECIDE", "DECODE", "DECREE", "DEDUCE", "DEDUCT", "DEEMED", "DEEPEN", "DEEPER", "DEEPLY", "DEFACE", "DEFAME", "DEFANG", "DEFEAT", "DEFECT", "DEFEND", "DEFILE", "DEFINE", "DEFORM", "DEFRAY", "DEFTLY", "DEFUSE", "DEGREE", "DELAYS", "DELETE", "DELUDE", "DELUGE", "DELUXE", "DEMAND", "DEMEAN", "DEMISE", "DEMONS", "DEMOTE", "DEMURE", "DENIAL", "DENIED", "DENIER", "DENIES", "DENOTE", "DENTAL", "DENTED", "DENUDE", "DEPART", "DEPEND", "DEPICT", "DEPLOY", "DEPORT", "DEPOSE", "DEPTHS", "DEPUTY", "DERAIL", "DERIDE", "DERIVE", "DERMAL", "DESERT", "DESIGN", "DESIRE", "DESIST", "DESPOT", "DETACH", "DETAIL", "DETAIN", "DETECT", "DETEST", "DETOUR", "DEVICE", "DEVILS", "DEVISE", "DEVOID", "DEVOTE", "DEVOUR", "DEVOUT", "DIADEM", "DIALOG", "DIAPER", "DIATOM", "DICTUM", "DIESEL", "DIFFER", "DIGEST", "DIGGER", "DIGITS", "DILATE", "DILUTE", "DIMMED", "DIMMER", "DIMPLE", "DINGHY", "DINING", "DINNER", "DIOXIN", "DIPOLE", "DIRECT", "DISARM", "DISBAR", "DISCUS", "DISHES", "DISMAL", "DISMAY", "DISOWN", "DISPEL", "DISUSE", "DITHER", "DIVERS", "DIVERT", "DIVEST", "DIVIDE", "DIVINE", "DIVING", "DOABLE", "DOCILE", "DOCKET", "DOCTOR", "DOGGIE", "DOINGS", "DOLLAR", "DOLLOP", "DOMAIN", "DOMINO", "DONATE", "DONKEY", "DONORS", "DOODAD", "DOODLE", "DOOMED", "DORSAL", "DOSAGE", "DOTING", "DOTTED", "DOUBLE", "DOUBLY", "DOUBTS", "DOUGHY", "DOVISH", "DOWNED", "DOWNER", "DOZENS", "DRAFTY", "DRAGON", "DRAINS", "DRAPED", "DRAWER", "DREAMS", "DREAMY", "DREARY", "DREDGE", "DRENCH", "DRESSY", "DRINKS", "DRIPPY", "DRIVEL", "DRIVEN", "DRIVER", "DRIVES", "DROOPY", "DROWSE", "DROWSY", "DRUDGE", "DRYING", "DUFFEL", "DUGOUT", "DULLED", "DUMBLY", "DUMPED", "DUPLEX", "DURESS", "DURIAN", "DURING", "DUSTER", "DUTIES", "DYEING", "DYNAMO",
@@ -70,38 +66,38 @@ public class template : MonoBehaviour
     int mod(int a, int b)
     {
         while (a < 0) a += b;
-        return (a % b);
+        return a % b;
     }
 
     int sqrt(int num)
     {
         int ans = 1;
-        while (ans * ans < num) ans++;
+        while (ans * ans <= num) ans++;
         return ans - 1;
     }
 
     char rule(char original, int font, int face, int s, int p)
     {
-        int n = pos(original);
+        int n = original - 'A';
         int ans;
         switch (face * 4 + font)
         {
-            case  0: ans = 2 * n;              break;
-            case  1: ans = n + s*p;            break;
-            case  2: ans = n * (n + 1);        break;
-            case  3: ans = n + (n / p);        break;
-            case  4: ans = n + sqrt(n * s);    break;
-            case  5: ans = 3 * n;              break;
-            case  6: ans = n + s;              break;
-            case  7: ans = (int)(3.14f * n);   break;
-            case  8: ans = p * n;              break;
-            case  9: ans = n / p;              break;
-            case 10: ans = 4 * n;              break;
-            case 11: ans = n;                  break;
-            case 12: ans = s * p * n;          break;
-            case 13: ans = n - s * p;          break;
-            case 14: ans = s * n;              break;
-            case 15: ans = 5 * n;              break;
+            case  0: ans = 2 * n;               break;
+            case  1: ans = n + s*p;             break;
+            case  2: ans = n * (n + 1);         break;
+            case  3: ans = n + n / p;           break;
+            case  4: ans = n + sqrt(n * s);     break;
+            case  5: ans = 3 * n;               break;
+            case  6: ans = n + s;               break;
+            case  7: ans = (int)(3.14f * n);    break;
+            case  8: ans = p * n;               break;
+            case  9: ans = n / p;               break;
+            case 10: ans = 4 * n;               break;
+            case 11: ans = n;                   break;
+            case 12: ans = s * p * n;           break;
+            case 13: ans = n - s * p;           break;
+            case 14: ans = s * n;               break;
+            case 15: ans = 5 * n;               break;
             default: ans = 0; break;
         }
         return (char)(mod(ans, 26) + 'A');
@@ -116,11 +112,9 @@ public class template : MonoBehaviour
             faceId[i] = Rnd.Range(0, 4);
         }
 
-        Debug.Log(selWords[0] + " " + selWords[1] + " " + selWords[2] + " " + selWords[3] + " " + selWords[4] + " " + selWords[5]);
+        Debug.LogFormat("[BorisP #{0}] Your original words for 6 stages will be: {1}",ModuleId,selWords[0] + " " + selWords[1] + " " + selWords[2] + " " + selWords[3] + " " + selWords[4] + " " + selWords[5]);
 
     }
-
-    int pos(char c) { return (int)(c - 'A'); }
 
     void answer()
     {
@@ -133,20 +127,22 @@ public class template : MonoBehaviour
                 stages[i] += rule(selWords[i][j], fontId[i], faceId[i],i+1,j+1);
             }
         }
+        Debug.LogFormat("[BorisP #{0}] Your modified words for 6 stages will be: {1}",ModuleId,
+            stages[0] + " " + stages[1] + " " + stages[2] + " " + stages[3] + " " + stages[4] + " " + stages[5]);
 
         for (int i = 0; i < 6; i++)
         {
             int letter = 0;
             for (int j = 0; j <= i; j++)
             {
-                letter += pos(stages[j][i]);
+                letter += stages[j][i] - 'A';
             }
-            Debug.Log(letter+" "+ (char)((letter % 26) + 'A'));
+            //Debug.Log(letter+" "+ (char)((letter % 26) + 'A'));
             ans += (char)((letter % 26) + 'A');
         }
 
         solution = ans;
-        Debug.Log("Ans: " + solution);
+        Debug.LogFormat("[BorisP #{0}] Ans: {1}", ModuleId, solution);
     }
 
     void Start()
@@ -156,29 +152,44 @@ public class template : MonoBehaviour
         generateWords();
         answer();
         topScreen.text = "";
-        bottomScreen.font = fonts[fontId[0]];
-        fontMat.mainTexture = fontMaterials[fontId[0]];
-        bottomScreen.text = selWords[0];
+        //bottomScreen.font = fonts[fontId[0]];
+        //fontMat.mainTexture = fontMaterials[fontId[0]];
+        //bottomScreen.text = selWords[0];
+        setFont(fontId[0],selWords[0]);
         screen.material.mainTexture = faces[faceId[0]];
     }
 
     void solve()
     {
         topScreen.text = "SOLVED";
-        bottomScreen.text = "";
+        setFont(0, "");
+        //bottomScreen.text = "";
         GetComponent<KMBombModule>().HandlePass();
         screen.material.mainTexture = faces[4];
     }
 
+    void setFont(int id, string word)
+    {
+        Debug.Log(id);
+        allFontsObjects[id].SetActive(true);
+        for (int i = 1; i < 4; i++)
+        {
+            allFontsObjects[(id+i)%4].SetActive(false);
+        }
+
+        allFonts[id].text = word;
+    }
+    
     void keypress(char c) {
         if (c == solution[stage])
         {
             if (stage == 5) { solve(); return; }
             stage++;
             topScreen.text = solution.Substring(0, stage);
-            bottomScreen.font = fonts[fontId[stage]];
-            fontMat.mainTexture = fontMaterials[fontId[stage]];
-            bottomScreen.text = selWords[stage];
+                //bottomScreen.font = fonts[fontId[stage]];
+                //fontMat.mainTexture = fontMaterials[fontId[stage]];
+            setFont(fontId[stage],selWords[stage]);
+            
             screen.material.mainTexture = faces[faceId[stage]];
         }
         else
